@@ -1085,6 +1085,57 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* Floating Action Buttons */}
+      <div className="fixed right-4 sm:right-8 bottom-10 sm:bottom-12 z-[99] flex flex-col gap-3 sm:gap-4">
+        {[
+          { 
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            ), 
+            href: "https://instagram.com/memoriesbyhemant", 
+            color: "bg-white", 
+            textColor: "text-[#830F1D]",
+            label: "Instagram"
+          },
+          { 
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            ), 
+            href: "https://wa.me/7870533594", 
+            color: "bg-[#25D366]", 
+            textColor: "text-white",
+            label: "WhatsApp"
+          },
+          { 
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            ), 
+            href: "tel:7870533594", 
+            color: "bg-[#830F1D]", 
+            textColor: "text-white",
+            label: "Call Us"
+          }
+        ].map((btn, i) => (
+          <motion.a
+            key={i}
+            href={btn.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.1, x: -5 }}
+            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 + (i * 0.1) }}
+            className={`${btn.color} ${btn.textColor} p-3 sm:p-4 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex items-center justify-center border border-black/5 hover:shadow-[0_15px_40px_rgba(0,0,0,0.2)] transition-shadow group relative`}
+          >
+            {btn.icon}
+            <span className="absolute right-full mr-4 bg-black/80 text-white text-[10px] font-bold px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap tracking-widest uppercase">
+              {btn.label}
+            </span>
+          </motion.a>
+        ))}
+      </div>
+
       {/* GLOBAL NOISE OVERLAY */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-overlay">
         <Image src="data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3E" alt="Noise" fill className="object-cover" />
