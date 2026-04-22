@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    return new Promise((resolve, reject) => {
+    return new Promise<NextResponse>((resolve) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           resource_type: 'auto',
