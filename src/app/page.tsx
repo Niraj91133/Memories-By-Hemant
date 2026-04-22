@@ -147,23 +147,16 @@ const Lightbox = ({
         </div>
 
         {/* Right Sidebar: Filmstrip - Horizontal on Mobile, Vertical on Desktop */}
-        <div className="flex lg:w-32 xl:w-48 lg:flex-col overflow-x-auto lg:overflow-y-auto no-scrollbar gap-4 px-6 border-t lg:border-t-0 lg:border-l border-white/5 py-8 sm:py-12 shrink-0 bg-black/20 lg:bg-transparent absolute bottom-0 lg:static w-full h-auto lg:h-full">
+        <div className="flex lg:w-32 xl:w-40 lg:flex-col overflow-x-auto lg:overflow-y-auto no-scrollbar gap-2 sm:gap-4 px-4 sm:px-6 border-t lg:border-t-0 lg:border-l border-white/5 py-4 sm:py-8 shrink-0 bg-black/40 lg:bg-transparent absolute bottom-0 lg:static w-full h-auto lg:h-full z-30">
           {images.map((img: any, i: number) => (
             <button 
               key={i} 
-              onClick={() => {
-                setCurrentIndex(i);
-                // On mobile, scroll to center on select
-                if (window.innerWidth < 1024) {
-                  const target = document.getElementById(`thumb-${i}`);
-                  target?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                }
-              }}
+              onClick={() => setCurrentIndex(i)}
               id={`thumb-${i}`}
-              className={`relative aspect-[3/4] w-20 lg:w-full shrink-0 transition-all duration-700 overflow-hidden rounded-sm ${
+              className={`relative aspect-[3/4] w-14 sm:w-20 lg:w-full shrink-0 transition-all duration-500 overflow-hidden rounded-sm ${
                 i === currentIndex 
-                  ? 'ring-2 ring-[#830F1D] scale-100 opacity-100 shadow-[0_0_20px_rgba(131,15,29,0.4)]' 
-                  : 'opacity-20 hover:opacity-50 grayscale scale-90'
+                  ? 'ring-2 ring-[#830F1D] scale-100 opacity-100' 
+                  : 'opacity-10 hover:opacity-40 grayscale scale-90'
               }`}
             >
               <Image src={img.url} alt={`Thumb ${i}`} fill className="object-cover" />
@@ -809,46 +802,41 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Bottom Contact Sheet Pattern - Referral Style: 3 Rows on Desktop, 4 Rows on Mobile */}
-        <div className="w-full grid grid-cols-6 sm:grid-cols-6 md:grid-cols-10 lg:grid-cols-15 gap-1.5 px-1 relative z-10">
-          {Array.from({ length: 90 }).map((_, i) => {
-            const currentImages = filteredGalleryMedia.length > 0 ? filteredGalleryMedia : galleryMedia;
-            const item = currentImages[i % currentImages.length];
-            const imgSrc = item.url;
-            
-            // Logic to match referral: 
-            // Mobile: 4 rows of 6 cols = 24 images
-            // Desktop: 3 rows of 15 cols = 45 images (md:grid-cols-10, lg:grid-cols-15)
-            let isVisible = false;
-            if (typeof window !== 'undefined') {
-                 if (window.innerWidth < 640) isVisible = i < 24;
-                 else if (window.innerWidth < 1024) isVisible = i < 30; // 3 rows of 10
-                 else isVisible = i < 45; // 3 rows of 15
-            } else {
-                 // Fallback for SSR or initial load (mostly mobile first)
-                 isVisible = i < 45;
-            }
-
-            return (
-              <div 
-                key={i} 
+        {/* Bottom Masonry Gallery - Improved Layout */}
+        <div className="w-full h-auto px-4 sm:px-12 xl:px-24 pb-20 relative z-10 transition-all">
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 space-y-4 sm:space-y-6">
+            {filteredMasonryMedia.map((item, i) => (
+              <motion.div 
+                key={item.id} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onClick={() => setPreviewIndex(i)}
-                className={`aspect-square border border-[#830F1D] overflow-hidden relative group cursor-crosshair transition-all 
-                  ${i >= 24 ? 'hidden' : 'block'} 
-                  ${i >= 24 && i < 45 ? 'sm:block' : ''} 
-                  ${i >= 45 ? 'hidden' : ''}`}
+                className="break-inside-avoid relative group cursor-pointer overflow-hidden border border-[#830F1D]/10 bg-white shadow-lg"
               >
-                <Image 
-                  src={imgSrc} 
-                  alt={`Gallery box ${i}`} 
-                  fill 
-                  className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0" 
-                />
-              </div>
-            );
-          })}
+                <div className="relative w-full h-full overflow-hidden">
+                  <Image 
+                    src={item.url} 
+                    alt={`Gallery ${i}`} 
+                    width={800}
+                    height={1200}
+                    style={{ width: '100%', height: 'auto' }}
+                    className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" 
+                  />
+                  <div className="absolute inset-0 bg-[#830F1D]/0 group-hover:bg-[#830F1D]/5 transition-colors duration-500" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          {filteredMasonryMedia.length === 0 && (
+            <div className="w-full py-20 text-center text-[#830F1D]/40 font-black tracking-widest text-xs uppercase">
+              NO ASSETS FOUND IN THIS CATEGORY
+            </div>
+          )}
         </div>
       </section>
 
