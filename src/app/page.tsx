@@ -5,6 +5,176 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchSiteContent, getDefaultSiteContent, type SiteContent } from "@/lib/siteContent";
 
+// Premium Lightbox Component matching reference
+const Lightbox = ({ 
+  isOpen, 
+  onClose, 
+  images, 
+  initialIndex,
+  categories,
+  activeCategory,
+  onCategoryChange 
+}: any) => {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  
+  useEffect(() => {
+    setCurrentIndex(initialIndex);
+  }, [initialIndex]);
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setCurrentIndex((prev: number) => (prev + 1) % images.length);
+      if (e.key === 'ArrowLeft') setCurrentIndex((prev: number) => (prev - 1 + images.length) % images.length);
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
+  }, [images.length, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[1000] bg-[#0A0A0A] flex flex-col items-center justify-center font-sans overflow-hidden select-none"
+    >
+      {/* Header Container */}
+      <div className="absolute top-0 left-0 right-0 h-16 sm:h-24 px-6 sm:px-12 flex items-center justify-between z-20">
+        <button 
+          onClick={onClose} 
+          className="text-white/60 hover:text-white text-[9px] sm:text-[10px] font-black tracking-widest uppercase flex items-center gap-4 transition-all"
+        >
+          <span className="hidden sm:block w-8 h-px bg-white/20" /> BACK TO OVERVIEW
+        </button>
+        
+        <div className="hidden sm:block text-white font-bold text-sm tracking-[0.2em] uppercase">
+          MEMORIES BY <span className="text-[#830F1D]">HEMANT</span>
+        </div>
+        
+        <button onClick={onClose} className="text-white/40 hover:text-white text-3xl transition-colors p-2">
+          ×
+        </button>
+      </div>
+
+      <div className="w-full h-full flex pt-16 sm:pt-24 relative overflow-hidden">
+        {/* Left Sidebar: Categories - Hidden on Mobile */}
+        <div className="hidden lg:flex w-64 flex-col px-12 py-12 gap-8 shrink-0 overflow-y-auto no-scrollbar">
+          <div className="flex flex-col gap-6">
+            {categories.map((cat: string) => (
+              <button 
+                key={cat}
+                onClick={() => onCategoryChange(cat)}
+                className={`text-left text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300 ${
+                  activeCategory === cat 
+                    ? 'text-white translate-x-2' 
+                    : 'text-white/10 hover:text-white/30 hover:translate-x-1'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Center Stage: Main Image */}
+        <div className="flex-1 relative flex flex-col items-center justify-center p-6 sm:p-20 lg:p-24">
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={currentIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+              className="relative w-full h-full flex items-center justify-center perspective-1000"
+            >
+              {/* Corner Accents */}
+              <div className="absolute -top-4 -left-4 w-6 h-6 border-t border-l border-white/20" />
+              <div className="absolute -top-4 -right-4 w-6 h-6 border-t border-r border-white/20" />
+              <div className="absolute -bottom-4 -left-4 w-6 h-6 border-b border-l border-white/20" />
+              <div className="absolute -bottom-4 -right-4 w-6 h-6 border-b border-r border-white/20" />
+              
+              <div className="relative w-full h-full max-h-[70vh] sm:max-h-[80vh] flex items-center justify-center">
+                <Image 
+                  src={images[currentIndex].url} 
+                  alt="Gallery content" 
+                  width={1600}
+                  height={1000}
+                  className="w-auto h-auto max-w-full max-h-full object-contain shadow-[0_0_100px_rgba(0,0,0,0.5)] select-none pointer-events-none"
+                  priority
+                />
+              </div>
+
+              {/* Mobile Arrows */}
+              <div className="lg:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 pointer-events-none">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev: number) => (prev - 1 + images.length) % images.length); }}
+                  className="w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white pointer-events-auto border border-white/10"
+                >
+                  <span className="mr-0.5 text-xl">{"<"}</span>
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev: number) => (prev + 1) % images.length); }}
+                  className="w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white pointer-events-auto border border-white/10"
+                >
+                  <span className="ml-0.5 text-xl">{">"}</span>
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Nav Controls Overlay */}
+          <div className="mt-8 sm:mt-16 flex items-center gap-10 sm:gap-16 text-white/30 font-black text-[9px] sm:text-[10px] tracking-widest z-10 transition-opacity">
+            <button 
+              onClick={() => setCurrentIndex((prev: number) => (prev - 1 + images.length) % images.length)}
+              className="hover:text-[#830F1D] hover:scale-110 transition-all uppercase px-4 py-2"
+            >
+              PREV
+            </button>
+            <div className="flex items-center gap-4 text-white/60">
+              <span className="text-white">{(currentIndex + 1).toString().padStart(2, '0')}</span>
+              <span className="w-10 h-px bg-white/10" />
+              <span>{images.length.toString().padStart(2, '0')}</span>
+            </div>
+            <button 
+              onClick={() => setCurrentIndex((prev: number) => (prev + 1) % images.length)}
+              className="hover:text-[#830F1D] hover:scale-110 transition-all uppercase px-4 py-2"
+            >
+              NEXT
+            </button>
+          </div>
+        </div>
+
+        {/* Right Sidebar: Filmstrip - Horizontal on Mobile, Vertical on Desktop */}
+        <div className="flex lg:w-32 xl:w-48 lg:flex-col overflow-x-auto lg:overflow-y-auto no-scrollbar gap-4 px-6 border-t lg:border-t-0 lg:border-l border-white/5 py-8 sm:py-12 shrink-0 bg-black/20 lg:bg-transparent absolute bottom-0 lg:static w-full h-auto lg:h-full">
+          {images.map((img: any, i: number) => (
+            <button 
+              key={i} 
+              onClick={() => {
+                setCurrentIndex(i);
+                // On mobile, scroll to center on select
+                if (window.innerWidth < 1024) {
+                  const target = document.getElementById(`thumb-${i}`);
+                  target?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                }
+              }}
+              id={`thumb-${i}`}
+              className={`relative aspect-[3/4] w-20 lg:w-full shrink-0 transition-all duration-700 overflow-hidden rounded-sm ${
+                i === currentIndex 
+                  ? 'ring-2 ring-[#830F1D] scale-100 opacity-100 shadow-[0_0_20px_rgba(131,15,29,0.4)]' 
+                  : 'opacity-20 hover:opacity-50 grayscale scale-90'
+              }`}
+            >
+              <Image src={img.url} alt={`Thumb ${i}`} fill className="object-cover" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function Home() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -625,33 +795,17 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Tap preview (Mobile + Desktop click) */}
         <AnimatePresence>
           {previewIndex !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
-              onClick={() => setPreviewIndex(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="relative w-[92vw] max-w-[520px] aspect-square border border-[#830F1D] bg-white shadow-[0_50px_120px_rgba(0,0,0,0.6)] overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Image src={(filteredGalleryMedia.length > 0 ? filteredGalleryMedia : galleryMedia)[previewIndex % (filteredGalleryMedia.length || galleryMedia.length)].url} alt="Gallery Preview" fill className="object-contain" />
-                <button
-                  onClick={() => setPreviewIndex(null)}
-                  className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/60 text-white border border-white/20 flex items-center justify-center font-black text-2xl"
-                  aria-label="Close preview"
-                >
-                  ×
-                </button>
-              </motion.div>
-            </motion.div>
+            <Lightbox 
+              isOpen={previewIndex !== null}
+              onClose={() => setPreviewIndex(null)}
+              images={filteredMasonryMedia}
+              initialIndex={previewIndex % (filteredMasonryMedia.length || 1)}
+              categories={categoryButtonNames}
+              activeCategory={activeGalleryCategory}
+              onCategoryChange={setActiveGalleryCategory}
+            />
           )}
         </AnimatePresence>
 
