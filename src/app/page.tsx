@@ -597,7 +597,7 @@ export default function Home() {
                       whileInView={{ opacity: 1, scale: 1 }} 
                       viewport={{ once: true }} 
                       transition={{ delay: i * 0.05 }} 
-                      className="flex-shrink-0 flex flex-col group w-[75vw] sm:w-[65vw]"
+                      className="flex-shrink-0 flex flex-col group w-[75vw] sm:w-[65vw] cursor-pointer"
                     >
                       <span className="text-[10px] font-black tracking-tighter text-[#A1A1A1] mb-2 group-hover:text-[#830F1D] transition-colors">{service.title}</span>
                       <div className="relative aspect-[4/5] w-full overflow-hidden border border-white/5 group-hover:border-[#830F1D]/40 transition-all">
@@ -611,7 +611,18 @@ export default function Home() {
               {/* Desktop: paged grid */}
               <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-8">
                 {desktopServicesVisible.map((service, i) => (
-                  <motion.div key={`${service.title}-${i}`} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex flex-col group">
+                  <motion.div 
+                    key={`${service.title}-${i}`} 
+                    onClick={() => {
+                      handleSelectGalleryCategory(service.title.toUpperCase());
+                      categoryGalleryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    initial={{ opacity: 0, scale: 0.9 }} 
+                    whileInView={{ opacity: 1, scale: 1 }} 
+                    viewport={{ once: true }} 
+                    transition={{ delay: i * 0.1 }} 
+                    className="flex flex-col group cursor-pointer"
+                  >
                     <span className="text-[9px] sm:text-[11px] font-black tracking-tighter text-[#A1A1A1] mb-2 sm:mb-4 group-hover:text-[#830F1D] transition-colors">{service.title}</span>
                     <div className="relative aspect-[2/3] w-full overflow-hidden border border-white/5 group-hover:border-[#830F1D]/40 transition-all">
                       <Image src={service.src} alt={service.title} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
