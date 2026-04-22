@@ -171,6 +171,7 @@ const Lightbox = ({
 export default function Home() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [lightboxImages, setLightboxImages] = useState<any[]>([]);
   const [roleIndex, setRoleIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [servicesPage, setServicesPage] = useState(0);
@@ -533,7 +534,11 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: (i % 6) * 0.1 }}
-              className={`relative break-inside-avoid border border-[#830F1D] p-0.5 bg-transparent overflow-hidden group shadow-sm hover:shadow-lg transition-all duration-500 ${
+              onClick={() => {
+                setLightboxImages(visibleGalleryMedia);
+                setPreviewIndex(i);
+              }}
+              className={`relative break-inside-avoid border border-[#830F1D] p-0.5 bg-transparent overflow-hidden group shadow-sm hover:shadow-lg transition-all duration-500 cursor-pointer ${
                 item.aspect === "landscape" ? "aspect-[3/2]" : "aspect-[2/3]"
               } ${!isGalleryExpanded && i >= mobileGalleryLimit ? "hidden sm:block" : ""}`}
             >
@@ -793,8 +798,8 @@ export default function Home() {
             <Lightbox 
               isOpen={previewIndex !== null}
               onClose={() => setPreviewIndex(null)}
-              images={filteredMasonryMedia}
-              initialIndex={previewIndex % (filteredMasonryMedia.length || 1)}
+              images={lightboxImages}
+              initialIndex={previewIndex % (lightboxImages.length || 1)}
               categories={categoryButtonNames}
               activeCategory={activeGalleryCategory}
               onCategoryChange={setActiveGalleryCategory}
@@ -814,7 +819,10 @@ export default function Home() {
                 transition={{ delay: i * 0.05 }}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() => setPreviewIndex(i)}
+                onClick={() => {
+                  setLightboxImages(filteredMasonryMedia);
+                  setPreviewIndex(i);
+                }}
                 className="break-inside-avoid relative group cursor-pointer overflow-hidden border border-[#830F1D]/10 bg-white shadow-lg"
               >
                 <div className="relative w-full h-full overflow-hidden">
