@@ -423,9 +423,49 @@ export default function Home() {
 
   const aboutImage = siteContent.media.find(m => m.section === "About" && m.title === "ME")?.url ?? "/images/memories2.png";
 
+  const [showStickyLogo, setShowStickyLogo] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) setShowStickyLogo(true);
+      else setShowStickyLogo(false);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <main className="relative w-full overflow-x-hidden selection:bg-[#830F1D] selection:text-[#FDFBF7] bg-[#FDFBF7]">
+      {/* Sticky Header Logo */}
+      <AnimatePresence>
+        {showStickyLogo && (
+          <motion.div
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            transition={{ duration: 0.5, ease: "circOut" }}
+            className="fixed top-0 left-0 w-full z-[100] flex justify-center py-4 sm:py-6 pointer-events-none"
+          >
+            <div 
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="bg-[#FDFBF7]/90 backdrop-blur-md border border-[#830F1D]/10 px-6 sm:px-10 py-2 sm:py-3 rounded-full shadow-2xl cursor-pointer pointer-events-auto group active:scale-95 transition-transform"
+            >
+              {heroLogoUrl ? (
+                <Image
+                  src={heroLogoUrl}
+                  alt="Sticky Logo"
+                  width={200}
+                  height={60}
+                  unoptimized
+                  className="h-6 sm:h-8 w-auto object-contain"
+                />
+              ) : (
+                <span className="font-bebas text-xl sm:text-2xl text-[#830F1D]">MEMORIES</span>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* SECTION 1: HERO */}
       <section className="h-[90vh] sm:h-screen w-full flex flex-col justify-between items-center relative overflow-hidden bg-[#FDFBF7]">
