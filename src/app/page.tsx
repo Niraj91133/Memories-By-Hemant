@@ -468,24 +468,25 @@ export default function Home() {
       </AnimatePresence>
       
       {/* SECTION 1: HERO */}
-      <section className="h-[90vh] sm:h-screen w-full flex flex-col justify-between items-center relative overflow-hidden bg-[#FDFBF7]">
-        <div className="w-full flex-shrink-0 flex flex-col items-center pt-8 sm:pt-16 px-4 z-10">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="flex flex-col items-center mb-4 sm:mb-6">
+      <section className="min-h-[100svh] lg:min-h-0 lg:h-screen w-full flex flex-col justify-between items-center relative overflow-hidden bg-[#FDFBF7]">
+        <div className="w-full flex-col flex items-center pt-8 lg:pt-12 px-4 z-10 flex-grow pb-[42vh] sm:pb-[48vh] lg:pb-[48vh]">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="flex flex-col items-center mb-6 lg:mb-4">
             <span className="text-[10px] sm:text-xs font-black tracking-[0.5em] uppercase text-[#830F1D]">CINEMATIC STORYTELLERS</span>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "easeOut" }} className="w-full flex-grow flex flex-col items-center justify-center text-center">
             {!mounted ? (
               <h1 className="font-bebas text-[12vw] sm:text-[10vw] lg:text-[8rem] xl:text-[9rem] leading-[0.8] uppercase tracking-tighter text-[#830F1D]">Memories by<br />Hemant</h1>
             ) : heroLogoUrl ? (
-              <div className="w-full flex items-center justify-center px-4">
+              <div className="w-full flex items-center justify-center px-4 py-2">
+                <h1 className="sr-only">Memories by Hemant - Cinematic Wedding & Event Photography</h1>
                 <Image
                   src={heroLogoUrl}
                   alt="Memories by Hemant logo"
-                  width={900}
-                  height={300}
+                  width={2000}
+                  height={1000}
                   unoptimized
                   priority
-                  className="h-16 sm:h-20 lg:h-32 w-auto object-contain"
+                  className="h-[35vh] sm:h-[40vh] lg:h-[40vh] xl:h-[45vh] w-auto max-w-[95vw] object-contain drop-shadow-2xl"
                 />
               </div>
             ) : (
@@ -493,19 +494,17 @@ export default function Home() {
             )}
           </motion.div>
         </div>
-        <div className="w-full relative overflow-hidden pointer-events-none mt-auto min-h-[300px]">
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden pointer-events-none z-20">
           {mounted && (
-            <div className="flex w-fit gap-3 sm:gap-4 animate-marquee items-end">
+            <div className="flex w-fit gap-0 animate-marquee items-end">
               {[...heroPhotosForTicker, ...heroPhotosForTicker, ...heroPhotosForTicker].map((src, index) => (
-                <div key={index} className="relative w-[50vw] sm:w-[35vw] lg:w-[22vw] aspect-[4/5] flex-shrink-0 overflow-hidden grayscale shadow-2xl">
-                  <Image 
+                <div key={index} className="relative h-[40vh] sm:h-[45vh] lg:h-[45vh] flex-shrink-0 overflow-visible grayscale">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
                     src={src} 
                     alt={`Hero Image ${index + 1}`} 
-                    fill 
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover" 
+                    className="h-full w-auto object-contain drop-shadow-2xl" 
                     draggable={false} 
-                    priority={index < 4} 
                   />
                 </div>
               ))}

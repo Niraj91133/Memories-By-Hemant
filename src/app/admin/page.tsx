@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import imageCompression from "browser-image-compression";
 
 import {
   fetchSiteContent,
@@ -14,6 +15,7 @@ import {
   saveFAQs,
   getDefaultSiteContent,
   type MediaAspect,
+  type MediaType,
   type MediaItem,
   type SiteSettings,
   type FAQItem,
@@ -122,6 +124,27 @@ export default function AdminPage() {
     return data.url;
   };
 
+  const compressAndUploadFile = async (file: File): Promise<string> => {
+    let fileToUpload = file;
+    if (file.type.startsWith('image/') && !file.type.includes('gif') && !file.type.includes('svg')) {
+      showNotification("Compressing image to save space...", "info");
+      try {
+        const options = {
+          maxSizeMB: 1.5,
+          maxWidthOrHeight: 2048,
+          useWebWorker: true,
+          initialQuality: 0.9
+        };
+        fileToUpload = await imageCompression(file, options);
+      } catch (e) {
+        console.error("Compression failed, uploading original:", e);
+      }
+    } else if (file.type.startsWith('video/')) {
+      showNotification("Uploading video...", "info");
+    }
+    return await uploadFile(fileToUpload);
+  };
+
   const getAspect = async (file: File): Promise<MediaAspect> => {
     if (file.type.startsWith('video/')) return "landscape";
     return new Promise((resolve) => {
@@ -153,26 +176,25 @@ export default function AdminPage() {
         const file = files[0];
         const isVideo = file.type.startsWith('video/');
         
-        showNotification(`Uploading to Cloudinary...`, "info");
-        const url = await uploadFile(file);
+        const url = await compressAndUploadFile(file);
         const aspect = await getAspect(file);
 
-        setMedia(prev => prev.map(item => 
-          item.id === swappingItemId 
-            ? { ...item, url, aspect, type: isVideo ? "video" : "image" } 
-            : item
-        ));
+        const updatedItem = media.find(i => i.id === swappingItemId);
+        if (updatedItem) {
+          const newItem = { ...updatedItem, url, aspect, type: isVideo ? "video" : "image" as MediaType };
+          setMedia(prev => prev.map(item => item.id === swappingItemId ? newItem : item));
+          await saveMediaItems([newItem]);
+        }
         setSwappingItemId(null);
         setHasUnsavedChanges(true);
-        showNotification("File successfully updated", "success");
+        showNotification("File successfully updated and saved", "success");
       } else {
         // Handle batch upload
         const newItems: MediaItem[] = [];
         for (const file of Array.from(files)) {
           const isVideo = file.type.startsWith('video/');
           
-          showNotification(`Uploading ${file.name} to Cloudinary...`, "info");
-          const url = await uploadFile(file);
+          const url = await compressAndUploadFile(file);
           const aspect = await getAspect(file);
 
           const isAboutMe = activeSection === "About";
@@ -196,8 +218,9 @@ export default function AdminPage() {
         } else {
           setMedia((prev) => [...newItems, ...prev]);
         }
+        await saveMediaItems(newItems);
         setHasUnsavedChanges(true);
-        showNotification(`Successfully uploaded ${newItems.length} assets`, "success");
+        showNotification(`Successfully uploaded and saved ${newItems.length} assets`, "success");
       }
     } catch (error) {
       console.error(error);
@@ -217,8 +240,7 @@ export default function AdminPage() {
     showNotification("Optimizing logo...", "info");
 
     try {
-      showNotification("Uploading logo to Cloudinary...", "info");
-      const url = await uploadFile(file);
+      const url = await compressAndUploadFile(file);
       const aspect = await getAspect(file);
       
       const logoItem: MediaItem = {
@@ -232,8 +254,9 @@ export default function AdminPage() {
       };
 
       setMedia((prev) => [logoItem, ...prev.filter((m) => !(m.section === "Hero" && m.title === "LOGO"))]);
+      await saveMediaItems([logoItem]);
       setHasUnsavedChanges(true);
-      showNotification("Logo updated", "success");
+      showNotification("Logo updated and saved", "success");
     } catch (error) {
       console.error(error);
       showNotification("Logo upload failed. Please try a different file.", "error");
@@ -300,8 +323,7 @@ export default function AdminPage() {
     showNotification(`Updating cover for ${category}...`, "info");
 
     try {
-      showNotification(`Uploading cover for ${category} to Cloudinary...`, "info");
-      const url = await uploadFile(file);
+      const url = await compressAndUploadFile(file);
       const aspect = await getAspect(file);
 
       const newItem: MediaItem = {
@@ -315,8 +337,9 @@ export default function AdminPage() {
       };
 
       setMedia((prev) => [newItem, ...prev.filter((m) => !(m.section === "Services" && m.title === category))]);
+      await saveMediaItems([newItem]);
       setHasUnsavedChanges(true);
-      showNotification(`${category} cover updated`, "success");
+      showNotification(`${category} cover updated and saved`, "success");
     } catch (error) {
       console.error(error);
       showNotification("Upload failed", "error");

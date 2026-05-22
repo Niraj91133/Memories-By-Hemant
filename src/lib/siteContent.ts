@@ -175,7 +175,7 @@ export async function fetchSiteContent(): Promise<SiteContent> {
       v: 2,
       settings: settings ? { ...defaults.settings, ...settings } : defaults.settings,
       galleryCategories: categories && categories.length > 0 
-        ? categories.map(c => c.name) 
+        ? categories.map((c: any) => c.name) 
         : defaults.galleryCategories,
       media: filteredMedia,
       faqs: faqs && faqs.length > 0 
