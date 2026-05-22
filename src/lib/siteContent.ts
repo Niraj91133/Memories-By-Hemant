@@ -173,7 +173,14 @@ export async function fetchSiteContent(): Promise<SiteContent> {
 
     return {
       v: 2,
-      settings: settings ? { ...defaults.settings, ...settings } : defaults.settings,
+      settings: settings ? { 
+        ...defaults.settings, 
+        ...settings,
+        about_roles: settings.about_roles || defaults.settings.about_roles,
+        phone: settings.phone || defaults.settings.phone,
+        email: settings.email || defaults.settings.email,
+        regions: settings.regions || defaults.settings.regions,
+      } : defaults.settings,
       galleryCategories: categories && categories.length > 0 
         ? categories.map((c: any) => c.name) 
         : defaults.galleryCategories,

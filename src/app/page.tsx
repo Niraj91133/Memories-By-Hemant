@@ -434,6 +434,27 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  if (!mounted) {
+    return (
+      <main className="min-h-screen w-full bg-[#FDFBF7] flex flex-col overflow-hidden relative">
+        <div className="w-full flex justify-center py-4 sm:py-6 mt-2">
+          <div className="w-48 h-10 sm:h-12 bg-black/5 rounded-full animate-pulse shadow-sm" />
+        </div>
+        
+        <div className="flex-1 flex flex-col items-center justify-center w-full px-4 mb-[20vh] sm:mb-[30vh]">
+          <div className="w-32 sm:w-48 h-3 sm:h-4 bg-[#830F1D]/10 rounded-full animate-pulse mb-6 sm:mb-8" />
+          <div className="w-[70vw] sm:w-[50vw] max-w-3xl h-[15vh] sm:h-[25vh] bg-black/5 rounded-3xl animate-pulse shadow-inner" />
+        </div>
+        
+        <div className="absolute bottom-0 left-0 w-full flex gap-2 sm:gap-4 overflow-hidden px-2 sm:px-4 items-end pointer-events-none">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="w-[45vw] sm:w-[25vw] h-[30vh] sm:h-[40vh] bg-black/5 shrink-0 rounded-t-2xl animate-pulse" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="relative w-full overflow-x-hidden selection:bg-[#830F1D] selection:text-[#FDFBF7] bg-[#FDFBF7]">
       {/* Sticky Header Logo */}
@@ -474,9 +495,7 @@ export default function Home() {
             <span className="text-[10px] sm:text-xs font-black tracking-[0.5em] uppercase text-[#830F1D]">CINEMATIC STORYTELLERS</span>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "easeOut" }} className="w-full flex-grow flex flex-col items-center justify-center text-center">
-            {!mounted ? (
-              <h1 className="font-bebas text-[12vw] sm:text-[10vw] lg:text-[8rem] xl:text-[9rem] leading-[0.8] uppercase tracking-tighter text-[#830F1D]">Memories by<br />Hemant</h1>
-            ) : heroLogoUrl ? (
+            {heroLogoUrl ? (
               <div className="w-full flex items-center justify-center px-4 py-2">
                 <h1 className="sr-only">Memories by Hemant - Cinematic Wedding & Event Photography</h1>
                 <Image
@@ -495,21 +514,19 @@ export default function Home() {
           </motion.div>
         </div>
         <div className="absolute bottom-0 left-0 w-full overflow-hidden pointer-events-none z-20">
-          {mounted && (
-            <div className="flex w-fit gap-0 animate-marquee items-end">
-              {[...heroPhotosForTicker, ...heroPhotosForTicker, ...heroPhotosForTicker].map((src, index) => (
-                <div key={index} className="relative h-[40vh] sm:h-[45vh] lg:h-[45vh] flex-shrink-0 overflow-visible grayscale">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={src} 
-                    alt={`Hero Image ${index + 1}`} 
-                    className="h-full w-auto object-contain drop-shadow-2xl" 
-                    draggable={false} 
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="flex w-fit gap-0 animate-marquee items-end">
+            {[...heroPhotosForTicker, ...heroPhotosForTicker, ...heroPhotosForTicker].map((src, index) => (
+              <div key={index} className="relative h-[40vh] sm:h-[45vh] lg:h-[45vh] flex-shrink-0 overflow-visible grayscale">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={src} 
+                  alt={`Hero Image ${index + 1}`} 
+                  className="h-full w-auto object-contain drop-shadow-2xl" 
+                  draggable={false} 
+                />
+              </div>
+            ))}
+          </div>
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[40%] text-[45vw] font-black opacity-[0.01] pointer-events-none select-none z-0 text-[#830F1D]">2026</div>
       </section>
