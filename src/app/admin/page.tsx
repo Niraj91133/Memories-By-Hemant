@@ -98,6 +98,16 @@ export default function AdminPage() {
   //   }
   // }, [galleryCategories, media, siteSettings, faqs, mounted]);
 
+  const handleSaveAll = async () => {
+    showNotification("Saving all changes...", "info");
+    await saveSiteSettings(siteSettings);
+    await saveGalleryCategories(galleryCategories);
+    await saveMediaItems(media);
+    await saveFAQs(faqs);
+    setHasUnsavedChanges(false);
+    showNotification("All changes published successfully", "success");
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const isIdMatch = !siteSettings.admin_id || loginId === siteSettings.admin_id;
@@ -267,10 +277,7 @@ export default function AdminPage() {
   };
 
   const removeMedia = async (id: string) => {
-    // Only delete from DB if it's not a default fallback ID
-    if (!id.includes('default')) {
-      await deleteMediaItem(id);
-    }
+    await deleteMediaItem(id);
     setMedia(prev => prev.filter(item => item.id !== id));
     setHasUnsavedChanges(true);
     showNotification("Asset removed successfully", "info");
@@ -1055,6 +1062,24 @@ export default function AdminPage() {
           )}
          </div>
       </main>
+
+      {/* FLOATING ACTION BUTTONS */}
+      <div className="fixed bottom-8 left-8 z-[90] flex flex-col gap-4">
+        <AnimatePresence>
+          {hasUnsavedChanges && (
+            <motion.button
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              onClick={handleSaveAll}
+              className="px-6 py-4 bg-[#830F1D] text-white rounded-full font-black text-xs tracking-widest uppercase shadow-2xl hover:bg-white hover:text-[#830F1D] transition-colors border border-transparent hover:border-[#830F1D] flex items-center gap-2"
+            >
+              <span className="animate-pulse">●</span>
+              PUBLISH CHANGES
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* NOTIFICATION TOAST */}
       <AnimatePresence>

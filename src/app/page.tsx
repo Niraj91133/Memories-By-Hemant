@@ -623,7 +623,7 @@ export default function Home() {
             </button>
             <div className="w-full sm:flex-grow relative z-10 overflow-hidden">
               {/* Mobile: horizontal scroll */}
-              <div ref={servicesScrollRef} className="md:hidden w-full overflow-x-auto no-scrollbar scroll-smooth py-4 touch-pan-x">
+              <div ref={servicesScrollRef} className="md:hidden w-full overflow-x-auto no-scrollbar scroll-smooth py-4 snap-x snap-mandatory touch-pan-x">
                 <div className="flex w-fit gap-4 px-4">
                   {servicesForHome.map((service, i) => (
                     <motion.div 
@@ -636,7 +636,7 @@ export default function Home() {
                       whileInView={{ opacity: 1, scale: 1 }} 
                       viewport={{ once: true }} 
                       transition={{ delay: i * 0.05 }} 
-                      className="flex-shrink-0 flex flex-col group w-[75vw] sm:w-[65vw] cursor-pointer"
+                      className="flex-shrink-0 flex flex-col group w-[75vw] sm:w-[65vw] cursor-pointer snap-center"
                     >
                       <span className="text-[10px] font-black tracking-tighter text-[#A1A1A1] mb-2 group-hover:text-[#830F1D] transition-colors">{service.title}</span>
                       <div className="relative aspect-[4/5] w-full overflow-hidden border border-white/5 group-hover:border-[#830F1D]/40 transition-all">
