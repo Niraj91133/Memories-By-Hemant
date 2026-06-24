@@ -640,7 +640,7 @@ export default function Home() {
             </button>
             <div className="w-full sm:flex-grow relative z-10 overflow-hidden">
               {/* Mobile: horizontal scroll */}
-              <div ref={servicesScrollRef} className="md:hidden w-full overflow-x-auto no-scrollbar scroll-smooth py-4 snap-x snap-mandatory touch-pan-x">
+              <div ref={servicesScrollRef} className="md:hidden w-full overflow-x-auto no-scrollbar scroll-smooth py-4 snap-x snap-mandatory">
                 <div className="flex w-fit gap-4 px-4">
                   {servicesForHome.map((service, i) => (
                     <motion.div 
