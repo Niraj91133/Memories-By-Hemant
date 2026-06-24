@@ -13,10 +13,10 @@ export default function BlogPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const loadData = async () => {
       const content = await fetchSiteContent();
       setSiteContent(content);
-      setMounted(true);
     };
     loadData();
   }, []);
@@ -53,7 +53,7 @@ export default function BlogPage() {
 
       {/* HERO IMAGE */}
       <section className="h-[60vh] relative overflow-hidden">
-        <Image src={blogData.image} alt={blogData.title} fill className="object-cover scale-105" />
+        <Image src={blogData.image} alt={blogData.title} fill className="object-cover scale-105" quality={100} priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
       </section>
 
