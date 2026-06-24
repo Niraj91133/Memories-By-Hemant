@@ -338,7 +338,7 @@ export default function Home() {
   const shouldShowGalleryMore = filteredMasonryMedia.length > mobileGalleryLimit && !isGalleryExpanded;
   const visibleGalleryMedia = filteredMasonryMedia;
 
-  const heroLogoUrl = siteContent.media.find((m) => m.section === "Hero" && m.title === "LOGO" && m.type === "image")?.url ?? "";
+  const heroLogoUrl = siteContent.media.find((m) => m.section === "Hero" && m.title === "LOGO" && m.type === "image")?.url ?? "/images/logo.png";
   const heroPhotosFromAdmin = siteContent.media
     .filter((m) => m.section === "Hero" && m.type === "image" && m.title !== "LOGO")
     .map((m) => m.url);
