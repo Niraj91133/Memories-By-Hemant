@@ -184,10 +184,10 @@ export default function Home() {
   const categoryGalleryRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    setMounted(true);
     const loadData = async () => {
       const content = await fetchSiteContent();
       setSiteContent(content);
-      setMounted(true);
     };
     loadData();
   }, []);
